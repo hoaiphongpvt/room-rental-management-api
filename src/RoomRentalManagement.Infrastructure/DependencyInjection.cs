@@ -14,6 +14,7 @@ namespace RoomRentalManagement.Infrastructure
             services.AddDbContext<ApplicationDBContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDBContext>());
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 

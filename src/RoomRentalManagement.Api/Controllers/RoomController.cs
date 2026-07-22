@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RoomRentalManagement.Application.Common.Models;
 using RoomRentalManagement.Application.Rooms;
-using RoomRentalManagement.Domain.Entities;
+using RoomRentalManagement.Application.Rooms.Dtos;
 
 namespace RoomRentalManagement.Api.Controllers
 {
@@ -18,46 +18,41 @@ namespace RoomRentalManagement.Api.Controllers
 
         // GET: api/rooms
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<Room>>>> GetRooms()
+        public async Task<ActionResult<ApiResponse<List<RoomDto>>>> GetRooms()
         {
             var rooms = await _roomService.GetRoomsAsync();
 
-            return Ok(ApiResponse<List<Room>>.SuccessResponse(rooms));
+            return Ok(ApiResponse<List<RoomDto>>.SuccessResponse(rooms));
         }
 
         // GET: api/rooms/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<Room>>> GetRoom(Guid id)
+        public async Task<ActionResult<ApiResponse<RoomDto>>> GetRoom(Guid id)
         {
             var room = await _roomService.GetRoomAsync(id);
 
             if (room == null)
             {
-                return NotFound(ApiResponse<Room>.Fail("Room not found"));
+                return NotFound(ApiResponse<RoomDto>.Fail("Room not found"));
             }
 
-            return Ok(ApiResponse<Room>.SuccessResponse(room));
+            return Ok(ApiResponse<RoomDto>.SuccessResponse(room));
         }
 
         // POST: api/rooms
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Room>>> CreateRoom(Room room)
+        public async Task<ActionResult<ApiResponse<RoomDto>>> CreateRoom(CreateRoomRequest request)
         {
-            var created = await _roomService.CreateRoomAsync(room);
+            var created = await _roomService.CreateRoomAsync(request);
 
-            return CreatedAtAction(nameof(GetRoom), new { id = created.Id }, ApiResponse<Room>.SuccessResponse(created, "Room created"));
+            return CreatedAtAction(nameof(GetRoom), new { id = created.Id }, ApiResponse<RoomDto>.SuccessResponse(created, "Room created"));
         }
 
         // PUT: api/rooms/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<object>>> UpdateRoom(Guid id, Room room)
+        public async Task<ActionResult<ApiResponse<object>>> UpdateRoom(Guid id, UpdateRoomRequest request)
         {
-            if (id != room.Id)
-            {
-                return BadRequest(ApiResponse<object>.Fail("Route id does not match body id"));
-            }
-
-            var updated = await _roomService.UpdateRoomAsync(id, room);
+            var updated = await _roomService.UpdateRoomAsync(id, request);
 
             if (!updated)
             {

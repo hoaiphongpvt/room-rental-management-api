@@ -24,7 +24,5 @@ namespace RoomRentalManagement.Infrastructure.Persistence.Repositories
         public void Update(Room room) => _context.Entry(room).State = EntityState.Modified;
 
         public void Remove(Room room) => _context.Rooms.Remove(room);
-
-        public Task SaveChangesAsync() => _context.SaveChangesAsync();
     }
 }

@@ -1,13 +1,13 @@
-using RoomRentalManagement.Domain.Entities;
+using RoomRentalManagement.Application.Users.Dtos;
 
 namespace RoomRentalManagement.Application.Users
 {
     public interface IUserService
     {
-        Task<List<User>> GetUsersAsync();
-        Task<User?> GetUserAsync(Guid id);
-        Task<User> CreateUserAsync(User user);
-        Task<bool> UpdateUserAsync(Guid id, User user);
+        Task<List<UserDto>> GetUsersAsync();
+        Task<UserDto?> GetUserAsync(Guid id);
+        Task<UserDto> CreateUserAsync(CreateUserRequest request);
+        Task<bool> UpdateUserAsync(Guid id, UpdateUserRequest request);
         Task<bool> DeleteUserAsync(Guid id);
     }
 }

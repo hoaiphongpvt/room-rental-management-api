@@ -1,4 +1,5 @@
 using RoomRentalManagement.Application.Common.Interfaces;
+using RoomRentalManagement.Application.Users.Dtos;
 using RoomRentalManagement.Domain.Entities;
 
 namespace RoomRentalManagement.Application.Users
@@ -6,40 +7,62 @@ namespace RoomRentalManagement.Application.Users
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public Task<List<User>> GetUsersAsync() => _userRepository.GetAllAsync();
-
-        public Task<User?> GetUserAsync(Guid id) => _userRepository.GetByIdAsync(id);
-
-        public async Task<User> CreateUserAsync(User user)
+        public async Task<List<UserDto>> GetUsersAsync()
         {
-            user.Id = Guid.NewGuid();
+            var users = await _userRepository.GetAllAsync();
+
+            return users.Select(ToDto).ToList();
+        }
+
+        public async Task<UserDto?> GetUserAsync(Guid id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+
+            return user == null ? null : ToDto(user);
+        }
+
+        public async Task<UserDto> CreateUserAsync(CreateUserRequest request)
+        {
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = request.Email,
+                Password = request.Password,
+                FullName = request.FullName,
+                Phone = request.Phone,
+                Role = request.Role
+            };
 
             await _userRepository.AddAsync(user);
-            await _userRepository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
-            return user;
+            return ToDto(user);
         }
 
-        public async Task<bool> UpdateUserAsync(Guid id, User user)
+        public async Task<bool> UpdateUserAsync(Guid id, UpdateUserRequest request)
         {
-            if (id != user.Id)
-            {
-                throw new ArgumentException("Route id does not match user id.", nameof(id));
-            }
+            var user = await _userRepository.GetByIdAsync(id);
 
-            if (!await _userRepository.ExistsAsync(id))
+            if (user == null)
             {
                 return false;
             }
 
+            user.Email = request.Email;
+            user.FullName = request.FullName;
+            user.Phone = request.Phone;
+            user.Role = request.Role;
+
             _userRepository.Update(user);
-            await _userRepository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return true;
         }
@@ -54,9 +77,20 @@ namespace RoomRentalManagement.Application.Users
             }
 
             _userRepository.Remove(user);
-            await _userRepository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return true;
         }
+
+        private static UserDto ToDto(User user) => new()
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FullName = user.FullName,
+            Phone = user.Phone,
+            Role = user.Role,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt
+        };
     }
 }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RoomRentalManagement.Application.Common.Models;
 using RoomRentalManagement.Application.Users;
-using RoomRentalManagement.Domain.Entities;
+using RoomRentalManagement.Application.Users.Dtos;
 
 namespace RoomRentalManagement.Api.Controllers
 {
@@ -18,46 +18,41 @@ namespace RoomRentalManagement.Api.Controllers
 
         // GET: api/users
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<User>>>> GetUsers()
+        public async Task<ActionResult<ApiResponse<List<UserDto>>>> GetUsers()
         {
             var users = await _userService.GetUsersAsync();
 
-            return Ok(ApiResponse<List<User>>.SuccessResponse(users));
+            return Ok(ApiResponse<List<UserDto>>.SuccessResponse(users));
         }
 
         // GET: api/users/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<User>>> GetUser(Guid id)
+        public async Task<ActionResult<ApiResponse<UserDto>>> GetUser(Guid id)
         {
             var user = await _userService.GetUserAsync(id);
 
             if (user == null)
             {
-                return NotFound(ApiResponse<User>.Fail("User not found"));
+                return NotFound(ApiResponse<UserDto>.Fail("User not found"));
             }
 
-            return Ok(ApiResponse<User>.SuccessResponse(user));
+            return Ok(ApiResponse<UserDto>.SuccessResponse(user));
         }
 
         // POST: api/users
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<User>>> CreateUser(User user)
+        public async Task<ActionResult<ApiResponse<UserDto>>> CreateUser(CreateUserRequest request)
         {
-            var created = await _userService.CreateUserAsync(user);
+            var created = await _userService.CreateUserAsync(request);
 
-            return CreatedAtAction(nameof(GetUser), new { id = created.Id }, ApiResponse<User>.SuccessResponse(created, "User created"));
+            return CreatedAtAction(nameof(GetUser), new { id = created.Id }, ApiResponse<UserDto>.SuccessResponse(created, "User created"));
         }
 
         // PUT: api/users/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<object>>> UpdateUser(Guid id, User user)
+        public async Task<ActionResult<ApiResponse<object>>> UpdateUser(Guid id, UpdateUserRequest request)
         {
-            if (id != user.Id)
-            {
-                return BadRequest(ApiResponse<object>.Fail("Route id does not match body id"));
-            }
-
-            var updated = await _userService.UpdateUserAsync(id, user);
+            var updated = await _userService.UpdateUserAsync(id, request);
 
             if (!updated)
             {

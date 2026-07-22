@@ -6,11 +6,13 @@ namespace RoomRentalManagement.Api.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        private readonly IHostEnvironment _environment;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, IHostEnvironment environment)
         {
             _next = next;
             _logger = logger;
+            _environment = environment;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -26,7 +28,8 @@ namespace RoomRentalManagement.Api.Middleware
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-                var response = ApiResponse<object>.Fail("Internal server error", new List<string> { ex.Message });
+                var errors = _environment.IsDevelopment() ? new List<string> { ex.Message } : null;
+                var response = ApiResponse<object>.Fail("Internal server error", errors);
                 await context.Response.WriteAsJsonAsync(response);
             }
         }

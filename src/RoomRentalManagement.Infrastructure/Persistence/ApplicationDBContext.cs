@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using RoomRentalManagement.Application.Common.Interfaces;
 using RoomRentalManagement.Domain.Entities;
 
 namespace RoomRentalManagement.Infrastructure.Persistence
 {
-    public class ApplicationDBContext : DbContext
+    public class ApplicationDBContext : DbContext, IUnitOfWork
     {
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
+
+        Task<int> IUnitOfWork.SaveChangesAsync() => SaveChangesAsync();
 
         public DbSet<Contract> Contracts { get; set; }
 

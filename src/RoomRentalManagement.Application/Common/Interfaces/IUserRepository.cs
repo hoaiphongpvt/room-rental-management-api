@@ -10,6 +10,5 @@ namespace RoomRentalManagement.Application.Common.Interfaces
         Task AddAsync(User user);
         void Update(User user);
         void Remove(User user);
-        Task SaveChangesAsync();
     }
 }
