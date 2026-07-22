@@ -1,0 +1,12 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost,1444;Database=room_rental_management_db;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True;"
+  }
+}
