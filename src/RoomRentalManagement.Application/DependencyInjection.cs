@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using RoomRentalManagement.Application.Rooms;
+using RoomRentalManagement.Application.Users;
 
 namespace RoomRentalManagement.Application
 {
@@ -8,6 +9,7 @@ namespace RoomRentalManagement.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }
