@@ -8,5 +8,11 @@
   "AllowedHosts": "*",
   "ConnectionStrings": {
     "DefaultConnection": "Server=localhost,1444;Database=room_rental_management_db;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True;"
+  },
+  "Jwt": {
+    "Key": "YOUR_RANDOM_SECRET_KEY_AT_LEAST_32_CHARS",
+    "Issuer": "RoomRentalManagement",
+    "Audience": "RoomRentalManagementClient",
+    "ExpiryMinutes": 60
   }
 }

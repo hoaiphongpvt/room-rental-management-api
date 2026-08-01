@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RoomRentalManagement.Application.Common.Models;
 using RoomRentalManagement.Application.Users;
@@ -7,6 +8,7 @@ namespace RoomRentalManagement.Api.Controllers
 {
     [ApiController]
     [Route("api/users")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

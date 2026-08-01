@@ -8,11 +8,13 @@ namespace RoomRentalManagement.Application.Users
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<List<UserDto>> GetUsersAsync()
@@ -35,7 +37,7 @@ namespace RoomRentalManagement.Application.Users
             {
                 Id = Guid.NewGuid(),
                 Email = request.Email,
-                Password = request.Password,
+                Password = _passwordHasher.Hash(request.Password),
                 FullName = request.FullName,
                 Phone = request.Phone,
                 Role = request.Role

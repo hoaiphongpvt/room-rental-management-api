@@ -17,6 +17,8 @@ namespace RoomRentalManagement.Infrastructure.Persistence.Repositories
 
         public Task<User?> GetByIdAsync(Guid id) => _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
+        public Task<User?> GetByEmailAsync(string email) => _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
         public Task<bool> ExistsAsync(Guid id) => _context.Users.AnyAsync(u => u.Id == id);
 
         public async Task AddAsync(User user) => await _context.Users.AddAsync(user);
